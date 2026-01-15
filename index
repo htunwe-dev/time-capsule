@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>时光胶囊 · Time Capsule</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Firebase (compat for GitHub Pages) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      background: #0f172a;
+      color: #e5e7eb;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: auto;
+    }
+
+    textarea, input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+    }
+
+    textarea {
+      resize: none;
+      height: 110px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #38bdf8;
+      color: #020617;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    .search {
+      margin: 30px 0 15px;
+    }
+
+    .card {
+      background: #020617;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #1e293b;
+    }
+
+    .meta {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 8px;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Stylish corner labels -->
+<style>
+  .corner-label {
+    position: fixed;
+    top: 15px;
+    font-weight: bold;
+    color: white;
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    font-size: 22px;          /* bigger font */
+    letter-spacing: 1px;      /* small spacing for modern look */
+    text-shadow: 0 0 8px rgba(0,0,0,0.6); /* glow effect */
+    z-index: 1000;
+    opacity: 0.85;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .corner-label:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+</style>
+
+<div class="corner-label" style="left: 20px;">@huiya</div>
+<div class="corner-label" style="right: 20px;">@night_version</div>
+
+
+  <div class="container">
+    <h1>时光胶囊 · Time Capsule</h1>
+    <div class="subtitle">
+      写给未来的自己 · Messages to Your Future Self
+    </div>
+
+    <!-- Write Message -->
+    <textarea id="message"
+      placeholder="写下一段给未来的自己的话…
+Write a message to your future self…"></textarea>
+
+    <input id="year"
+      placeholder="目标年份（可选，例如 2028） · Target year (optional, e.g. 2028)">
+
+    <button onclick="submitMessage()">
+      封存到时光胶囊 · Seal into Time Capsule
+    </button>
+
+    <!-- Search -->
+    <input class="search" id="search"
+      placeholder="搜索消息或年份… Search messages or year…"
+      oninput="renderMessages()">
+
+    <!-- Messages -->
+    <div id="messages"></div>
+
+    <div class="footer">
+      匿名 · 无需登录 · Anonymous · No login required
+    </div>
+  </div>
+
+  <script>
+    // 🔥 Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDBxLmSFIyfPLHx0FKNcfjr1Na5_vqHaKo",
+      authDomain: "time-capsule-45680.firebaseapp.com",
+      projectId: "time-capsule-45680",
+      storageBucket: "time-capsule-45680.firebasestorage.app",
+      messagingSenderId: "881797225588",
+      appId: "1:881797225588:web:844881b2953a1d16d14521",
+      measurementId: "G-JQDKNH5YEE"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    let allMessages = [];
+
+    function submitMessage() {
+      const text = message.value.trim();
+      const yearValue = year.value.trim();
+
+      if (!text) {
+        alert("消息不能为空 / Message cannot be empty");
+        return;
+      }
+
+      if (text.length > 300) {
+        alert("消息太长（最多 300 字） / Message too long (max 300 chars)");
+        return;
+      }
+
+      db.collection("messages").add({
+        text: text,
+        year: yearValue || "未来 / Future",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      message.value = "";
+      year.value = "";
+    }
+
+    // 🔥 Listen to Firestore changes
+    db.collection("messages")
+      .orderBy("createdAt", "desc")
+      .onSnapshot(snapshot => {
+        allMessages = snapshot.docs
+          .map(doc => doc.data())
+          .filter(d => d.createdAt); // avoid null timestamps
+        renderMessages();
+      });
+
+    function renderMessages() {
+      const keyword = search.value.toLowerCase();
+      const container = document.getElementById("messages");
+      container.innerHTML = "";
+
+      allMessages.forEach(m => {
+        if (
+          m.text.toLowerCase().includes(keyword) ||
+          (m.year && m.year.toLowerCase().includes(keyword))
+        ) {
+          const div = document.createElement("div");
+          div.className = "card";
+          div.innerHTML = `
+            <div>${escapeHTML(m.text)}</div>
+            <div class="meta">📅 ${m.year}</div>
+          `;
+          container.appendChild(div);
+        }
+      });
+    }
+
+    // 🔐 Basic XSS protection
+    function escapeHTML(str) {
+      return str.replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[m]);
+    }
+  </script>
+
+</body>
+</html>
