@@ -1,22 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <!-- Primary Meta Tags -->
-<meta name="title" content="时光胶囊 · Time Capsule - 写给未来的自己">
-<meta name="description" content="An anonymous digital time capsule. Write a message to your future self and seal it in time. 写给未来的自己，封存此刻的回忆。">
-
-<!-- Open Graph / Facebook / LinkedIn -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://htunwe-dev.github.io">
-<meta property="og:title" content="时光胶囊 · Time Capsule">
-<meta property="og:description" content="Write a message to your future self. 匿名封存你的时光记忆。">
-<meta property="og:image" content="https://htunwe-dev.github.iosocial-preview.png">
-
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:title" content="时光胶囊 · Time Capsule">
-<meta property="twitter:description" content="Write a message to your future self.">
-
   <meta charset="UTF-8" />
   <title>时光胶囊 · Time Capsule</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,230 +10,194 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont;
-      background: #0f172a;
-      color: #e5e7eb;
-      margin: 0;
-      padding: 20px;
-    }
+/* 📌 PINNED MESSAGE STYLE */
+.card.pinned-card {
+  border: 1px solid #facc15;
+  background: linear-gradient(145deg, #1e1b04, #020617);
+}
 
-    h1 {
-      text-align: center;
-      margin-bottom: 5px;
-    }
+.pinned {
+  color: #facc15;
+  font-size: 12px;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
 
-    .subtitle {
-      text-align: center;
-      color: #94a3b8;
-      margin-bottom: 30px;
-      font-size: 14px;
-    }
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  background: #0f172a;
+  color: #e5e7eb;
+  margin: 0;
+  padding: 20px;
+}
 
-    .container {
-      max-width: 720px;
-      margin: auto;
-    }
-
-    textarea, input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      font-size: 15px;
-    }
-
-    textarea {
-      resize: none;
-      height: 110px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      background: #38bdf8;
-      color: #020617;
-      font-size: 16px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    button:hover {
-      background: #0ea5e9;
-    }
-
-    .search {
-      margin: 30px 0 15px;
-    }
-
-    .card {
-      background: #020617;
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      border: 1px solid #1e293b;
-    }
-
-    .meta {
-      font-size: 12px;
-      color: #64748b;
-      margin-top: 8px;
-    }
-
-    .footer {
-      text-align: center;
-      font-size: 12px;
-      color: #64748b;
-      margin-top: 40px;
-    }
-  </style>
+h1 { text-align: center; margin-bottom: 5px; }
+.subtitle { text-align: center; color: #94a3b8; margin-bottom: 30px; font-size: 14px; }
+.container { max-width: 720px; margin: auto; }
+textarea, input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: none; outline: none; font-size: 15px; }
+textarea { resize: none; height: 110px; }
+button { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #38bdf8; color: #020617; font-size: 16px; cursor: pointer; font-weight: 600; }
+button:hover { background: #0ea5e9; }
+.search { margin: 30px 0 15px; }
+.card { background: #020617; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #1e293b; }
+.meta { font-size: 12px; color: #64748b; margin-top: 8px; }
+.pinned { color: #38bdf8; font-size: 12px; margin-bottom: 6px; font-weight: 600; }
+.footer { text-align: center; font-size: 12px; color: #64748b; margin-top: 40px; }
+.corner-label { position: fixed; top: 15px; font-weight: bold; color: white; font-family: 'Segoe UI', 'Roboto', sans-serif; font-size: 22px; letter-spacing: 1px; text-shadow: 0 0 8px rgba(0,0,0,0.6); z-index: 1000; opacity: 0.85; transition: opacity 0.2s, transform 0.2s; }
+.corner-label:hover { opacity: 1; transform: scale(1.1); }
+</style>
 </head>
 <body>
-
-<!-- Stylish corner labels -->
-<style>
-  .corner-label {
-    position: fixed;
-    top: 15px;
-    font-weight: bold;
-    color: white;
-    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-    font-size: 22px;          /* bigger font */
-    letter-spacing: 1px;      /* small spacing for modern look */
-    text-shadow: 0 0 8px rgba(0,0,0,0.6); /* glow effect */
-    z-index: 1000;
-    opacity: 0.85;
-    transition: opacity 0.2s, transform 0.2s;
-  }
-
-  .corner-label:hover {
-    opacity: 1;
-    transform: scale(1.1);
-  }
-</style>
 
 <div class="corner-label" style="left: 20px;">@huiya</div>
 <div class="corner-label" style="right: 20px;">@night_version</div>
 
-
-  <div class="container">
-    <h1>时光胶囊 · Time Capsule</h1>
-    <div class="subtitle">
-      写给未来的自己 · Messages to Your Future Self
-    </div>
-
-    <!-- Write Message -->
-    <textarea id="message"
-      placeholder="写下一段给未来的自己的话…
-Write a message to your future self…"></textarea>
-
-    <input id="year"
-      placeholder="目标年份（可选，例如 2028） · Target year (optional, e.g. 2028)">
-
-    <button onclick="submitMessage()">
-      封存到时光胶囊 · Seal into Time Capsule
-    </button>
-
-    <!-- Search -->
-    <input class="search" id="search"
-      placeholder="搜索消息或年份… Search messages or year…"
-      oninput="renderMessages()">
-
-    <!-- Messages -->
-    <div id="messages"></div>
-
-    <div class="footer">
-      匿名 · 无需登录 · Anonymous · No login required
-    </div>
+<div class="container">
+  <h1>时光胶囊 · Time Capsule</h1>
+  <div class="subtitle">
+    写给未来的自己 · Messages to Your Future Self
   </div>
 
-  <script>
-    // 🔥 Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyDBxLmSFIyfPLHx0FKNcfjr1Na5_vqHaKo",
-      authDomain: "time-capsule-45680.firebaseapp.com",
-      projectId: "time-capsule-45680",
-      storageBucket: "time-capsule-45680.firebasestorage.app",
-      messagingSenderId: "881797225588",
-      appId: "1:881797225588:web:844881b2953a1d16d14521",
-      measurementId: "G-JQDKNH5YEE"
-    };
+  <textarea id="message" placeholder="写下一段给未来的自己的话… Write a message to your future self"></textarea>
+  <input id="year" placeholder="目标年份（可选，例如 2028） · Target year (optional)">
+  <button onclick="submitMessage()">封存到时光胶囊 · Seal into Time Capsule</button>
+  <input class="search" id="search" placeholder="搜索消息或年份… Search messages or year…" oninput="renderMessages()">
+  <div id="messages"></div>
+  <div class="footer">匿名 · 无需登录 · Anonymous · No login required</div>
+</div>
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDBxLmSFIyfPLHx0FKNcfjr1Na5_vqHaKo",
+  authDomain: "time-capsule-45680.firebaseapp.com",
+  projectId: "time-capsule-45680",
+  storageBucket: "time-capsule-45680.firebasestorage.app",
+  messagingSenderId: "881797225588",
+  appId: "1:881797225588:web:844881b2953a1d16d14521",
+  measurementId: "G-JQDKNH5YEE"
+};
 
-    let allMessages = [];
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-    function submitMessage() {
-      const text = message.value.trim();
-      const yearValue = year.value.trim();
+let allMessages = [];
+let devMode = false; // ephemeral, reset on refresh
 
-      if (!text) {
-        alert("消息不能为空 / Message cannot be empty");
-        return;
+function submitMessage() {
+  let text = message.value.trim();
+  const yearValue = year.value.trim();
+
+  // Enable Dev Mode only when typing secret
+  if (text === "LiZhengHuiADMIN") {
+    devMode = true;
+    alert("Dev Mode enabled! 🎉 Pin/Unpin/Delete buttons are now visible.");
+    message.value = "";
+    renderMessages(); // re-render to show Dev Mode buttons
+    return;
+  }
+
+  if (!text) { alert("消息不能为空 / Message cannot be empty"); return; }
+
+  let pinned = false;
+  const pinMatch = text.match(/^pin\(([\s\S]+)\)$/i);
+  if (pinMatch) { pinned = true; text = pinMatch[1].trim(); }
+
+  if (text.length > 300) { alert("消息太长（最多 300 字） / Message too long"); return; }
+
+  db.collection("messages").add({
+    text: text,
+    year: yearValue || "未来 / Future",
+    pinned: pinned,
+    priority: pinned ? 1 : 0,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  message.value = "";
+  year.value = "";
+}
+
+// Firestore listener
+db.collection("messages")
+  .onSnapshot(snapshot => {
+    allMessages = snapshot.docs.map(doc => ({ ...doc.data(), _id: doc.id }))
+                               .filter(d => d.createdAt);
+
+    // Sort pinned first, then newest
+    allMessages.sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      if (a.createdAt && b.createdAt) return b.createdAt.seconds - a.createdAt.seconds;
+      return 0;
+    });
+
+    renderMessages();
+  });
+
+function renderMessages() {
+  const keyword = search.value.toLowerCase();
+  const container = document.getElementById("messages");
+  container.innerHTML = "";
+
+  allMessages.forEach(m => {
+    if (m.text.toLowerCase().includes(keyword) || (m.year && m.year.toLowerCase().includes(keyword))) {
+      const div = document.createElement("div");
+      div.className = "card" + (m.pinned ? " pinned-card" : "");
+      div.innerHTML = `
+        ${m.pinned ? `<div class="pinned">📌 PINNED</div>` : ""}
+        <div>${escapeHTML(m.text)}</div>
+        <div class="meta">📅 ${m.year}</div>
+      `;
+
+      // Show Dev Mode buttons only if devMode is active
+      if (devMode) {
+        const adminMenu = document.createElement("div");
+        adminMenu.style.marginTop = "6px";
+        adminMenu.style.display = "flex";
+        adminMenu.style.gap = "6px";
+
+        const pinBtn = document.createElement("button");
+        pinBtn.textContent = "📌 Pin";
+        pinBtn.style.fontSize = "12px"; pinBtn.style.padding = "3px 6px";
+        pinBtn.onclick = e => {
+          e.stopPropagation();
+          db.collection("messages").doc(m._id).update({ pinned: true })
+            .catch(err => alert("Error pinning: " + err));
+        };
+
+        const unpinBtn = document.createElement("button");
+        unpinBtn.textContent = "📍 Unpin";
+        unpinBtn.style.fontSize = "12px"; unpinBtn.style.padding = "3px 6px";
+        unpinBtn.onclick = e => {
+          e.stopPropagation();
+          db.collection("messages").doc(m._id).update({ pinned: false })
+            .catch(err => alert("Error unpinning: " + err));
+        };
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "🗑 Delete";
+        deleteBtn.style.fontSize = "12px"; deleteBtn.style.padding = "3px 6px";
+        deleteBtn.onclick = e => {
+          e.stopPropagation();
+          if (confirm("Delete this message permanently?")) {
+            db.collection("messages").doc(m._id).delete()
+              .catch(err => alert("Error deleting: " + err));
+          }
+        };
+
+        adminMenu.appendChild(pinBtn);
+        adminMenu.appendChild(unpinBtn);
+        adminMenu.appendChild(deleteBtn);
+        div.appendChild(adminMenu);
       }
 
-      if (text.length > 300) {
-        alert("消息太长（最多 300 字） / Message too long (max 300 chars)");
-        return;
-      }
-
-      db.collection("messages").add({
-        text: text,
-        year: yearValue || "未来 / Future",
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      message.value = "";
-      year.value = "";
+      container.appendChild(div);
     }
+  });
+}
 
-    // 🔥 Listen to Firestore changes
-    db.collection("messages")
-      .orderBy("createdAt", "desc")
-      .onSnapshot(snapshot => {
-        allMessages = snapshot.docs
-          .map(doc => doc.data())
-          .filter(d => d.createdAt); // avoid null timestamps
-        renderMessages();
-      });
-
-    function renderMessages() {
-      const keyword = search.value.toLowerCase();
-      const container = document.getElementById("messages");
-      container.innerHTML = "";
-
-      allMessages.forEach(m => {
-        if (
-          m.text.toLowerCase().includes(keyword) ||
-          (m.year && m.year.toLowerCase().includes(keyword))
-        ) {
-          const div = document.createElement("div");
-          div.className = "card";
-          div.innerHTML = `
-            <div>${escapeHTML(m.text)}</div>
-            <div class="meta">📅 ${m.year}</div>
-          `;
-          container.appendChild(div);
-        }
-      });
-    }
-
-    // 🔐 Basic XSS protection
-    function escapeHTML(str) {
-      return str.replace(/[&<>"']/g, m => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      })[m]);
-    }
-  </script>
-
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[m]);
+}
+</script>
 </body>
 </html>
