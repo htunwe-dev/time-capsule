@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Generate Admin Code</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{font-family:system-ui;display:flex;flex-direction:column;align-items:center;padding:40px;}
+button{padding:12px 20px;margin-top:20px;font-size:16px;cursor:pointer;}
+code{display:block;margin-top:20px;font-size:18px;color:#0ea5e9;}
+</style>
+</head>
+<body>
+
+<h1>Generate One-Time Admin Code</h1>
+<p>Click the button to generate a code that will be valid **once**.</p>
+<button id="generateBtn">Generate Code</button>
+<code id="codeDisplay"></code>
+
+<!-- Load Firebase first -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+// -----------------
+// Firebase Init
+// -----------------
+const firebaseConfig = {
+    apiKey:"AIzaSyDBxLmSFIyfPLHx0FKNcfjr1Na5_vqHaKo",
+    authDomain:"time-capsule-45680.firebaseapp.com",
+    projectId:"time-capsule-45680"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// -----------------
+// Generate Code
+// -----------------
+function generateCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    for(let i=0;i<8;i++) code += chars[Math.floor(Math.random()*chars.length)];
+
+    db.collection("adminCodes").add({
+        code: code,
+        used: false,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+        document.getElementById("codeDisplay").textContent = code;
+    })
+    .catch(err => {
+        alert("Error saving code: " + err);
+        console.error(err);
+    });
+}
+
+// -----------------
+// Attach event safely
+// -----------------
+document.getElementById("generateBtn").addEventListener("click", generateCode);
+</script>
+
+</body>
+</html>
