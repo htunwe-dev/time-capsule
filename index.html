@@ -1,110 +1,231 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <title>时光胶囊 · Time Capsule</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<title>时光胶囊 · Time Capsule</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Firebase (compat for GitHub Pages) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  <style>
-/* 📌 PINNED MESSAGE STYLE */
+<style>
 .card.pinned-card {
   border: 1px solid #facc15;
   background: linear-gradient(145deg, #1e1b04, #020617);
 }
-
 .pinned {
   color: #facc15;
   font-size: 12px;
   margin-bottom: 6px;
   font-weight: 700;
 }
-
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont;
   background: #0f172a;
   color: #e5e7eb;
   margin: 0;
-  padding: 20px;
 }
-
-h1 { text-align: center; margin-bottom: 5px; }
-.subtitle { text-align: center; color: #94a3b8; margin-bottom: 30px; font-size: 14px; }
-.container { max-width: 720px; margin: auto; }
-textarea, input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: none; outline: none; font-size: 15px; }
-textarea { resize: none; height: 110px; }
-button { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #38bdf8; color: #020617; font-size: 16px; cursor: pointer; font-weight: 600; }
-button:hover { background: #0ea5e9; }
-.search { margin: 30px 0 15px; }
-.card { background: #020617; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #1e293b; }
-.meta { font-size: 12px; color: #64748b; margin-top: 8px; }
-.pinned { color: #38bdf8; font-size: 12px; margin-bottom: 6px; font-weight: 600; }
-.footer { text-align: center; font-size: 12px; color: #64748b; margin-top: 40px; }
-.corner-label { position: fixed; top: 15px; font-weight: bold; color: white; font-family: 'Segoe UI', 'Roboto', sans-serif; font-size: 22px; letter-spacing: 1px; text-shadow: 0 0 8px rgba(0,0,0,0.6); z-index: 1000; opacity: 0.85; transition: opacity 0.2s, transform 0.2s; }
-.corner-label:hover { opacity: 1; transform: scale(1.1); }
+h1 {
+  text-align: center;
+  margin-bottom: 5px;
+}
+.subtitle {
+  text-align: center;
+  color: #94a3b8;
+  margin-bottom: 30px;
+  font-size: 14px;
+}
+.container {
+  max-width: 720px;
+  margin: auto;
+  padding: 20px; /* move padding here instead of body */
+  box-sizing: border-box; /* include padding in width calculation */
+}
+textarea,
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  box-sizing: border-box; /* ensures full width including padding */
+}
+textarea {
+  resize: none;
+  height: 110px;
+}
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #38bdf8;
+  color: #020617;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 10px;
+  box-sizing: border-box; /* ensure full width */
+}
+button:hover {
+  background: #0ea5e9;
+}
+.search {
+  margin: 30px 0 15px;
+}
+.card {
+  background: #020617;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #1e293b;
+}
+.meta {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 8px;
+}
+.pinned {
+  color: #38bdf8;
+  font-size: 12px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 40px;
+}
+.corner-label {
+  position: fixed;
+  top: 15px;
+  font-weight: bold;
+  color: white;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 22px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(0,0,0,0.6);
+  z-index: 1000;
+  opacity: 0.85;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.corner-label:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
 </style>
+
+
+
+
 </head>
 <body>
 
-<div class="corner-label" style="left: 20px;">@huiya</div>
-<div class="corner-label" style="right: 20px;">@night_version</div>
+<div class="corner-label" style="left:20px;">@huiya</div>
+<div class="corner-label" style="right:20px;">@night_version</div>
 
 <div class="container">
-  <h1>时光胶囊 · Time Capsule</h1>
-  <div class="subtitle">
-    写给未来的自己 · Messages to Your Future Self
-  </div>
+<h1>时光胶囊 · Time Capsule</h1>
+<div class="subtitle">写给未来的自己 · Messages to Your Future Self</div>
 
-  <textarea id="message" placeholder="写下一段给未来的自己的话… Write a message to your future self"></textarea>
-  <input id="year" placeholder="目标年份（可选，例如 2028） · Target year (optional)">
-  <button onclick="submitMessage()">封存到时光胶囊 · Seal into Time Capsule</button>
-  <input class="search" id="search" placeholder="搜索消息或年份… Search messages or year…" oninput="renderMessages()">
-  <div id="messages"></div>
-  <div class="footer">匿名 · 无需登录 · Anonymous · No login required</div>
+<textarea id="message" placeholder="写下一段给未来的自己的话… Write a message to your future self"></textarea>
+<input id="year" placeholder="目标年份（可选，例如 2028） · Target year (optional)">
+<button onclick="submitMessage()">封存到时光胶囊 · Seal into Time Capsule</button>
+<input class="search" id="search" placeholder="搜索消息或年份… Search messages or year…" oninput="renderMessages()">
+<div id="messages"></div>
+<div class="footer">匿名 · 无需登录 · Anonymous · No login required</div>
 </div>
 
 <script>
+// -----------------
+// Firebase Init
+// -----------------
 const firebaseConfig = {
-  apiKey: "AIzaSyDBxLmSFIyfPLHx0FKNcfjr1Na5_vqHaKo",
-  authDomain: "time-capsule-45680.firebaseapp.com",
-  projectId: "time-capsule-45680",
-  storageBucket: "time-capsule-45680.firebasestorage.app",
-  messagingSenderId: "881797225588",
-  appId: "1:881797225588:web:844881b2953a1d16d14521",
-  measurementId: "G-JQDKNH5YEE"
+  apiKey:"AIzaSyDBxLmSFIyfPLHx0FKNcfjr1Na5_vqHaKo",
+  authDomain:"time-capsule-45680.firebaseapp.com",
+  projectId:"time-capsule-45680",
+  storageBucket:"time-capsule-45680.firebasestorage.app",
+  messagingSenderId:"881797225588",
+  appId:"1:881797225588:web:844881b2953a1d16d14521",
+  measurementId:"G-JQDKNH5YEE"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// -----------------
+// DOM Elements
+// -----------------
+const messageEl = document.getElementById("message");
+const yearEl = document.getElementById("year");
+const searchEl = document.getElementById("search");
+const submitBtn = document.querySelector("button");
+
+// -----------------
+// State
+// -----------------
 let allMessages = [];
-let devMode = false; // ephemeral, reset on refresh
+let devMode = false;
+const DEV_TOKEN = "Admin123";
+let sending = false; // prevents duplicate clicks
 
-function submitMessage() {
-  let text = message.value.trim();
-  const yearValue = year.value.trim();
+// -----------------
+// Try Dev Mode
+// -----------------
+async function tryDevMode(code){
+  try {
+    const snapshot = await db.collection("adminCodes")
+      .where("code", "==", code)
+      .where("used", "==", false)
+      .limit(1)
+      .get();
+    if(!snapshot.empty){
+      const doc = snapshot.docs[0];
+      await db.collection("adminCodes").doc(doc.id).update({used:true});
+      devMode = true;
+      alert("Dev Mode enabled! 🎉 This code cannot be used again.");
+      renderMessages();
+      return true;
+    }
+  } catch(err){
+    console.error("Dev mode error:", err);
+  }
+  return false;
+}
 
-  // Enable Dev Mode only when typing secret
-  if (text === "LiZhengHuiADMIN") {
-    devMode = true;
-    alert("Dev Mode enabled! 🎉 Pin/Unpin/Delete buttons are now visible.");
-    message.value = "";
-    renderMessages(); // re-render to show Dev Mode buttons
+// -----------------
+// Submit Message
+// -----------------
+async function submitMessage() {
+  if(sending) return; // prevent multiple simultaneous submits
+  sending = true;
+  submitBtn.disabled = true; // visually disable button
+
+  const textValue = messageEl.value.trim();
+  const yearValue = yearEl.value.trim();
+
+  if(!textValue){ alert("消息不能为空 / Message cannot be empty"); sending=false; submitBtn.disabled=false; return; }
+
+  // Check Dev Mode first
+  if(await tryDevMode(textValue)){
+    messageEl.value = "";
+    sending=false;
+    submitBtn.disabled=false;
     return;
   }
 
-  if (!text) { alert("消息不能为空 / Message cannot be empty"); return; }
-
   let pinned = false;
-  const pinMatch = text.match(/^pin\(([\s\S]+)\)$/i);
-  if (pinMatch) { pinned = true; text = pinMatch[1].trim(); }
+  let text = textValue;
+  const pinMatch = textValue.match(/^pin\(([\s\S]+)\)$/i);
+  if(pinMatch){ pinned = true; text = pinMatch[1].trim(); }
 
-  if (text.length > 300) { alert("消息太长（最多 300 字） / Message too long"); return; }
+  if(text.length > 300){ alert("消息太长（最多 300 字） / Message too long"); sending=false; submitBtn.disabled=false; return; }
 
-  db.collection("messages").add({
+  await db.collection("messages").add({
     text: text,
     year: yearValue || "未来 / Future",
     pinned: pinned,
@@ -112,82 +233,62 @@ function submitMessage() {
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  message.value = "";
-  year.value = "";
+  messageEl.value = "";
+  yearEl.value = "";
+  sending=false;
+  submitBtn.disabled=false;
 }
 
-// Firestore listener
-db.collection("messages")
-  .onSnapshot(snapshot => {
-    allMessages = snapshot.docs.map(doc => ({ ...doc.data(), _id: doc.id }))
-                               .filter(d => d.createdAt);
-
-    // Sort pinned first, then newest
-    allMessages.sort((a, b) => {
-      if (a.pinned && !b.pinned) return -1;
-      if (!a.pinned && b.pinned) return 1;
-      if (a.createdAt && b.createdAt) return b.createdAt.seconds - a.createdAt.seconds;
-      return 0;
-    });
-
-    renderMessages();
+// -----------------
+// Listen to messages
+// -----------------
+db.collection("messages").orderBy("createdAt","desc").onSnapshot(snapshot => {
+  allMessages = snapshot.docs.map(doc => ({...doc.data(), _id: doc.id})).filter(d => d.createdAt);
+  allMessages.sort((a,b)=>{
+    if(a.pinned && !b.pinned) return -1;
+    if(!a.pinned && b.pinned) return 1;
+    return 0;
   });
+  renderMessages();
+});
 
-function renderMessages() {
-  const keyword = search.value.toLowerCase();
+// -----------------
+// Render messages
+// -----------------
+function renderMessages(){
+  const keyword = searchEl.value.toLowerCase();
   const container = document.getElementById("messages");
   container.innerHTML = "";
 
-  allMessages.forEach(m => {
-    if (m.text.toLowerCase().includes(keyword) || (m.year && m.year.toLowerCase().includes(keyword))) {
+  allMessages.forEach(m=>{
+    if(m.text.toLowerCase().includes(keyword) || (m.year && m.year.toLowerCase().includes(keyword))){
       const div = document.createElement("div");
       div.className = "card" + (m.pinned ? " pinned-card" : "");
-      div.innerHTML = `
-        ${m.pinned ? `<div class="pinned">📌 PINNED</div>` : ""}
-        <div>${escapeHTML(m.text)}</div>
-        <div class="meta">📅 ${m.year}</div>
-      `;
+      div.innerHTML = `${m.pinned ? `<div class="pinned">📌 PINNED</div>` : ""}<div>${escapeHTML(m.text)}</div><div class="meta">📅 ${m.year}</div>`;
 
-      // Show Dev Mode buttons only if devMode is active
-      if (devMode) {
-        const adminMenu = document.createElement("div");
-        adminMenu.style.marginTop = "6px";
-        adminMenu.style.display = "flex";
-        adminMenu.style.gap = "6px";
+      if(devMode){
+        const menu = document.createElement("div");
+        menu.style.display = "flex";
+        menu.style.gap = "6px";
+        menu.style.marginTop = "6px";
 
         const pinBtn = document.createElement("button");
         pinBtn.textContent = "📌 Pin";
-        pinBtn.style.fontSize = "12px"; pinBtn.style.padding = "3px 6px";
-        pinBtn.onclick = e => {
-          e.stopPropagation();
-          db.collection("messages").doc(m._id).update({ pinned: true })
-            .catch(err => alert("Error pinning: " + err));
-        };
+        pinBtn.style.fontSize="12px"; pinBtn.style.padding="3px 6px";
+        pinBtn.onclick = e=>{e.stopPropagation(); db.collection("messages").doc(m._id).update({pinned:true, devToken:DEV_TOKEN});};
 
         const unpinBtn = document.createElement("button");
         unpinBtn.textContent = "📍 Unpin";
-        unpinBtn.style.fontSize = "12px"; unpinBtn.style.padding = "3px 6px";
-        unpinBtn.onclick = e => {
-          e.stopPropagation();
-          db.collection("messages").doc(m._id).update({ pinned: false })
-            .catch(err => alert("Error unpinning: " + err));
-        };
+        unpinBtn.style.fontSize="12px"; pinBtn.style.padding="3px 6px";
+        unpinBtn.onclick = e=>{e.stopPropagation(); db.collection("messages").doc(m._id).update({pinned:false, devToken:DEV_TOKEN});};
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "🗑 Delete";
-        deleteBtn.style.fontSize = "12px"; deleteBtn.style.padding = "3px 6px";
-        deleteBtn.onclick = e => {
-          e.stopPropagation();
-          if (confirm("Delete this message permanently?")) {
-            db.collection("messages").doc(m._id).delete()
-              .catch(err => alert("Error deleting: " + err));
-          }
-        };
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "🗑 Delete";
+        delBtn.style.fontSize="12px"; delBtn.style.padding="3px 6px";
+        delBtn.onclick = e=>{ e.stopPropagation(); if(confirm("Delete permanently?")) db.collection("messages").doc(m._id).delete();};
 
-        adminMenu.appendChild(pinBtn);
-        adminMenu.appendChild(unpinBtn);
-        adminMenu.appendChild(deleteBtn);
-        div.appendChild(adminMenu);
+        menu.append(pinBtn, unpinBtn, delBtn);
+        div.appendChild(menu);
       }
 
       container.appendChild(div);
@@ -195,9 +296,18 @@ function renderMessages() {
   });
 }
 
-function escapeHTML(str) {
-  return str.replace(/[&<>"']/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[m]);
+// -----------------
+// Escape HTML
+// -----------------
+function escapeHTML(str){
+  return str.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]);
 }
+
+// -----------------
+// Attach click safely
+// -----------------
+submitBtn.removeAttribute("onclick"); // remove old inline onclick
+submitBtn.addEventListener("click", submitMessage);
 </script>
 </body>
 </html>
